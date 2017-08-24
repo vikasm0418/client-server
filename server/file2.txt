@@ -1,0 +1,2 @@
+Q:What's the object-oriented method of becoming wealthy?
+A:Inheritence
