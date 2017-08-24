@@ -1,0 +1,39 @@
+1.Execution
+a)compile the server.c as gcc server.c -o server
+b)start TCP connection at port 10000 as ./server 1000 (server will read port number as first argument and sync accordingly)
+c)Now that server has started it is listening for clients so compile client.c similary with executable client_exe
+d)send connection request to server as client_exe 127.0.0.1 10000(IP of localhost and port number of server where TCP connection is done
+f)Server listens to this request and asks for username and password.Client takes user input for password and username and sends back to server.Server authenticates username and welcome user with hello message.Client asks for a file download.If file is present server sents it to client for downloading else sends a messages as file not found.
+e)Once this transfer is complete server closes client connection and connects with other clients in the queue.(connection is also closed if username or password is incomplete)
+
+2.Implementation:
+
+Client.c
+a)client screates a TCP socket for connecting with server
+b)data structure 'server' stores information about the server
+c)client sends connection request to server (Note: server is already running at this time)
+d)input and output variables are used to store user input and server output respectively.
+e)With buffer we specify the maximum data size that can be transfered
+f)Once a connection socket is done client sends username and password in the format username:password which is recieved from user input
+g)If authentication is succesfull client asks for filename to be downloaded.This file name is sent to server.
+h)Once we recieve file we create a temporary file with the input name and download all content in the corresponding file.
+
+server.c
+a)server starts a TCP connection and listens to clients.Use bind to sync server with corresponding socket(Also we use INADDR_ANY i.e any available port for connection and same is sent to the client).
+b)Once a client knocks on server it creates a connection socket for further interaction.
+c)Sever verifies  the username and password recieved from client and verifies it from users.txt if they are present it will authenticate and keep connection alive otherwise c)onnection closes as close(new)(here new is the connection socket).
+d)server takes the file in binary format and transfers chunks of files(256 bytes) to the client
+e)checks on how many bytes have been read.If read bytes are less than 256 means either we encountered EOF or there was error in reading.
+
+3.limitations
+a)can't send larger files since buffer size is only 256.
+b)Optional features not yet implemented.
+e)Files can't be uploaded in the server.
+
+4.Assumption
+a)User will input username and password in the given format.
+b)The user doesn't know the credential file name.Else it can download that file and can cause problems for authentication.
+c)If bytes read from a file are less tahn 256 tha we reached EOF or there was an error in reading.
+d)MAX data that can be transferred is 1024 bytes over the connection.
+e)Server can hold upto 2 clients max in the queue for connection .
+
